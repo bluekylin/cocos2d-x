@@ -333,6 +333,9 @@
     <ClCompile Include="..\textures\CCTexturePVR.cpp">
       <Filter>textures</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\win32\CCOPENGLView_win32.cpp">
+      <Filter>platform\win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\cocoa\CCNS.h">
@@ -689,6 +692,9 @@
     <ClInclude Include="..\CCConfiguration.h" />
     <ClInclude Include="..\include\CCTexturePVR.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\win32\CCOPENGLView_win32.h">
+      <Filter>platform\win32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
