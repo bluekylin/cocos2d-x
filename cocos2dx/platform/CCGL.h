@@ -74,8 +74,27 @@ THE SOFTWARE.
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 //#include <GLES/gl.h>
 //#include <GLES/glext.h>
-#include "GL/GL.h"
-#include "GL/GLU.h"
+#include "GL/glew.h"
+
+#undef ccglGenerateMipmap
+#undef ccglGenFramebuffers
+#undef ccglBindFramebuffer
+#undef ccglFramebufferTexture2D
+#undef ccglDeleteFramebuffers
+#undef ccglCheckFramebufferStatus
+
+#define ccglGenerateMipmap			glGenerateMipmap
+#define ccglGenFramebuffers			glGenFramebuffers
+#define ccglBindFramebuffer			glBindFramebuffer
+#define ccglFramebufferTexture2D	glFramebufferTexture2D
+#define ccglDeleteFramebuffers		glDeleteFramebuffers
+#define ccglCheckFramebufferStatus	glCheckFramebufferStatus
+
+#define glFrustumf glFrustumfOES
+#define GL_POINT_SPRITE_OES         GL_POINT_SPRITE
+#define GL_COORD_REPLACE_OES        GL_COORD_REPLACE
+#define GL_POINT_SIZE_ARRAY_OES     GL_POINT_SIZE
+
 #endif
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)

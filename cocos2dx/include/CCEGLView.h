@@ -25,6 +25,11 @@ THE SOFTWARE.
 #ifndef __CC_EGLVIEW_H__
 #define __CC_EGLVIEW_H__
 
+#ifdef _WIN32
+#include "../platform/win32/CCOPENGLView_win32.h"
+#else
 #include "../platform/CCEGLView_platform.h"
+#endif
+
 
 #endif	// end of __CC_EGLVIEW_H__
