@@ -214,7 +214,7 @@ reshape(int width, int height)
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrthof(-rx, rx, -ry, ry, -1.0f, 1.0f);
+	ccglOrtho(-rx, rx, -ry, ry, -1.0f, 1.0f);
 	glTranslatef(0.5f, 0.5f, 0.0f);
 }
 
@@ -490,12 +490,12 @@ void ChipmunkTestLayer::onEnter()
 	// portraint
     //glOrthof(-320/factor, 320/factor, -480/factor, 480/factor, -1.0f, 1.0f); 
 	// landscape 
-    glOrthof(-320/factor, 320/factor, 0/factor, 960/factor, 1.0f, -1.0f); 
+    ccglOrtho(-320/factor, 320/factor, 0/factor, 960/factor, 1.0f, -1.0f); 
 #else
     // portraint
     //glOrthof(-320/factor, 320/factor, -480/factor, 480/factor, -1.0f, 1.0f);
     // landscape
-    glOrthof(-480/factor, 480/factor, -320/factor, 320/factor, 1.0f, -1.0f);
+    ccglOrtho(-480/factor, 480/factor, -320/factor, 320/factor, 1.0f, -1.0f);
 #endif
 
     glMatrixMode(GL_MODELVIEW);

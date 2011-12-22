@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 //#include "EGL/egl.h"
 //#include "gles/gl.h"
-#include "GL/GL.h"
-#include "GL/GLU.h"
+//#include "GL/GL.h"
+#include "GL/glew.h"
 
 #include "CCSet.h"
 #include "ccMacros.h"
@@ -49,19 +49,25 @@ class CCEGL
 public:
 	~CCEGL() 
 	{
-		if (EGL_NO_SURFACE != m_eglSurface)
+		//if (EGL_NO_SURFACE != m_eglSurface)
+		//{
+		//	eglDestroySurface(m_eglDisplay, m_eglSurface);
+		//}
+		//if (EGL_NO_CONTEXT != m_eglContext)
+		//{
+		//	eglDestroyContext(m_eglDisplay, m_eglContext);
+		//}
+		//eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+		//eglTerminate(m_eglDisplay);
+		if (m_HDC)
 		{
-			eglDestroySurface(m_eglDisplay, m_eglSurface);
+			ReleaseDC(m_HWND, m_HDC);
 		}
-		if (EGL_NO_CONTEXT != m_eglContext)
+
+		if (m_HWND && !DestroyWindow(m_HWND))					// Are We Able To Destroy The Window?
 		{
-			eglDestroyContext(m_eglDisplay, m_eglContext);
-		}
-		eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-		eglTerminate(m_eglDisplay);
-		if (m_eglNativeDisplay)
-		{
-			ReleaseDC(m_eglNativeWindow, m_eglNativeDisplay);
+			MessageBox(NULL,L"Could Not Release hWnd.",L"SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
+			m_HWND=NULL;										// Set hWnd To NULL
 		}
 	}
 
@@ -73,45 +79,109 @@ public:
 		{
 			CC_BREAK_IF(! pEGL);
 
-			pEGL->m_eglNativeWindow = pWindow->getHWnd();
+			pEGL->m_HWND = pWindow->getHWnd();
 
-			pEGL->m_eglNativeDisplay = GetDC(pEGL->m_eglNativeWindow);
+			pEGL->m_HDC = GetDC(pEGL->m_HWND);
 
-			EGLDisplay eglDisplay;
-			CC_BREAK_IF(EGL_NO_DISPLAY == (eglDisplay = eglGetDisplay(pEGL->m_eglNativeDisplay)));
+			//EGLDisplay eglDisplay;
+			//CC_BREAK_IF(EGL_NO_DISPLAY == (eglDisplay = eglGetDisplay(pEGL->m_HDC)));
 
-			EGLint nMajor, nMinor;
-			CC_BREAK_IF(EGL_FALSE == eglInitialize(eglDisplay, &nMajor, &nMinor) || 1 != nMajor);
+			//EGLint nMajor, nMinor;
+			//CC_BREAK_IF(EGL_FALSE == eglInitialize(eglDisplay, &nMajor, &nMinor) || 1 != nMajor);
 
-			const EGLint aConfigAttribs[] =
+			//const EGLint aConfigAttribs[] =
+			//{
+			//	EGL_LEVEL,				0,
+			//	EGL_SURFACE_TYPE,		EGL_WINDOW_BIT,
+			//	EGL_RENDERABLE_TYPE,	EGL_OPENGL_ES2_BIT,
+			//	EGL_NATIVE_RENDERABLE,	EGL_FALSE,
+			//	EGL_DEPTH_SIZE,			16,
+			//	EGL_NONE,
+			//};
+			//EGLint iConfigs;
+			//EGLConfig eglConfig;
+			//CC_BREAK_IF(EGL_FALSE == eglChooseConfig(eglDisplay, aConfigAttribs, &eglConfig, 1, &iConfigs) 
+			//	|| (iConfigs != 1));
+
+			//EGLContext eglContext;
+			//eglContext = eglCreateContext(eglDisplay, eglConfig, NULL, NULL);
+			//CC_BREAK_IF(EGL_NO_CONTEXT == eglContext);
+
+			//EGLSurface eglSurface;
+			//eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, pEGL->m_HWND, NULL);
+			//CC_BREAK_IF(EGL_NO_SURFACE == eglSurface);
+
+			//CC_BREAK_IF(EGL_FALSE == eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext));
+
+			//pEGL->m_eglDisplay = eglDisplay;
+			//pEGL->m_eglConfig  = eglConfig;
+			//pEGL->m_eglContext = eglContext;
+			//pEGL->m_eglSurface = eglSurface;
+
+			static	PIXELFORMATDESCRIPTOR pfd=				// pfd Tells Windows How We Want Things To Be
 			{
-				EGL_LEVEL,				0,
-				EGL_SURFACE_TYPE,		EGL_WINDOW_BIT,
-				EGL_RENDERABLE_TYPE,	EGL_OPENGL_ES2_BIT,
-				EGL_NATIVE_RENDERABLE,	EGL_FALSE,
-				EGL_DEPTH_SIZE,			16,
-				EGL_NONE,
+				sizeof(PIXELFORMATDESCRIPTOR),				// Size Of This Pixel Format Descriptor
+				1,											// Version Number
+				PFD_DRAW_TO_WINDOW |						// Format Must Support Window
+				PFD_SUPPORT_OPENGL |						// Format Must Support OpenGL
+				PFD_DOUBLEBUFFER,							// Must Support Double Buffering
+				PFD_TYPE_RGBA,								// Request An RGBA Format
+				24,											// Select Our Color Depth
+				0, 0, 0, 0, 0, 0,							// Color Bits Ignored
+				0,											// No Alpha Buffer
+				0,											// Shift Bit Ignored
+				0,											// No Accumulation Buffer
+				0, 0, 0, 0,									// Accumulation Bits Ignored
+				16,											// 16Bit Z-Buffer (Depth Buffer)  
+				0,											// No Stencil Buffer
+				0,											// No Auxiliary Buffer
+				PFD_MAIN_PLANE,								// Main Drawing Layer
+				0,											// Reserved
+				0, 0, 0										// Layer Masks Ignored
 			};
-			EGLint iConfigs;
-			EGLConfig eglConfig;
-			CC_BREAK_IF(EGL_FALSE == eglChooseConfig(eglDisplay, aConfigAttribs, &eglConfig, 1, &iConfigs) 
-				|| (iConfigs != 1));
+			pfd.cColorBits = (BYTE) GetDeviceCaps( pEGL->m_HDC, BITSPIXEL );
 
-			EGLContext eglContext;
-			eglContext = eglCreateContext(eglDisplay, eglConfig, NULL, NULL);
-			CC_BREAK_IF(EGL_NO_CONTEXT == eglContext);
+			GLuint		PixelFormat;			// Holds The Results After Searching For A Match
+			if (!(PixelFormat=ChoosePixelFormat(pEGL->m_HDC,&pfd)))	// Did Windows Find A Matching Pixel Format?
+			{							// Reset The Display
+				MessageBox(NULL,L"Can't Find A Suitable PixelFormat.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
+				return FALSE;								// Return FALSE
+			}
 
-			EGLSurface eglSurface;
-			eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, pEGL->m_eglNativeWindow, NULL);
-			CC_BREAK_IF(EGL_NO_SURFACE == eglSurface);
+			if(!SetPixelFormat(pEGL->m_HDC,PixelFormat,&pfd))		// Are We Able To Set The Pixel Format?
+			{								// Reset The Display
+				MessageBox(NULL,L"Can't Set The PixelFormat.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
+				return FALSE;								// Return FALSE
+			}
 
-			CC_BREAK_IF(EGL_FALSE == eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext));
+			HGLRC hRC;
+			if (!(hRC=wglCreateContext(pEGL->m_HDC)))				// Are We Able To Get A Rendering Context?
+			{
+				MessageBox(NULL,L"Can't Create A GL Rendering Context.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
+				return FALSE;								// Return FALSE
+			}
 
-			pEGL->m_eglDisplay = eglDisplay;
-			pEGL->m_eglConfig  = eglConfig;
-			pEGL->m_eglContext = eglContext;
-			pEGL->m_eglSurface = eglSurface;
-			bSuccess = TRUE;
+			if(!wglMakeCurrent(pEGL->m_HDC,hRC))					// Try To Activate The Rendering Context
+			{
+				MessageBox(NULL,L"Can't Activate The GL Rendering Context.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
+				return FALSE;								// Return FALSE
+			}
+
+			//wglMakeCurrent(pEGL->m_HDC,wglCreateContext(pEGL->m_HDC));
+
+			GLenum err = glewInit();
+			if ( GLEW_OK != err )
+			{
+				WCHAR errInfo[100];
+				const char* errs = (const char*)glewGetErrorString(err);
+				mbstowcs(errInfo, errs, 100 );
+				//MultiByteToWideChar(CP_ACP, 0, glewGetErrorString(err), -1, errInfo, 100);
+				MessageBox(NULL,L"glewInit Failed!", errInfo, MB_OK | MB_ICONINFORMATION);
+			}
+			else
+			{
+				bSuccess = TRUE;
+			}			
 		} while (0);
 
 		if (! bSuccess)
@@ -143,27 +213,28 @@ public:
 
 	void swapBuffers()
 	{
-		if (EGL_NO_DISPLAY != m_eglDisplay)
-		{
-			eglSwapBuffers(m_eglDisplay, m_eglSurface);
-		}
+		SwapBuffers(m_HDC);
+		//if (EGL_NO_DISPLAY != m_eglDisplay)
+		//{
+		//	eglSwapBuffers(m_eglDisplay, m_eglSurface);
+		//}
 	}
 private:
 	CCEGL() 
-		: m_eglNativeWindow(NULL)
-		, m_eglNativeDisplay(EGL_DEFAULT_DISPLAY)
-		, m_eglDisplay(EGL_NO_DISPLAY)
-		, m_eglConfig(0)
-		, m_eglSurface(EGL_NO_SURFACE)
-		, m_eglContext(EGL_NO_CONTEXT)
+		: m_HWND(NULL)
+		, m_HDC(0)
+		//, m_eglDisplay(EGL_NO_DISPLAY)
+		//, m_eglConfig(0)
+		//, m_eglSurface(EGL_NO_SURFACE)
+		//, m_eglContext(EGL_NO_CONTEXT)
 	{}
 
-	EGLNativeWindowType     m_eglNativeWindow;
-	EGLNativeDisplayType    m_eglNativeDisplay;
-	EGLDisplay              m_eglDisplay;
-	EGLConfig               m_eglConfig;
-	EGLSurface              m_eglSurface;
-	EGLContext              m_eglContext;
+	HWND		m_HWND;
+	HDC			m_HDC;
+	//EGLDisplay              m_eglDisplay;
+	//EGLConfig               m_eglConfig;
+	//EGLSurface              m_eglSurface;
+	//EGLContext              m_eglContext;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -204,72 +275,121 @@ CCEGLView::~CCEGLView()
 {
 }
 
-bool CCEGLView::Create(LPCTSTR pTitle, int w, int h)
+/*	This Code Creates Our OpenGL Window.  Parameters Are:					*
+ *	title			- Title To Appear At The Top Of The Window				*
+ *	width			- Width Of The GL Window Or Fullscreen Mode				*
+ *	height			- Height Of The GL Window Or Fullscreen Mode			*
+ *	bits			- Number Of Bits To Use For Color (8/16/24/32)			*
+ *	fullscreenflag	- Use Fullscreen Mode (TRUE) Or Windowed Mode (FALSE)	*/
+bool CCEGLView::Create(LPCTSTR pTitle, int width, int height, int bits, bool fullscreen)
 {
-	bool bRet = false;
-	do 
+	GLuint		PixelFormat;			// Holds The Results After Searching For A Match
+	WNDCLASS	wc;						// Windows Class Structure
+	DWORD		dwExStyle;				// Window Extended Style
+	DWORD		dwStyle;				// Window Style
+	RECT		WindowRect;				// Grabs Rectangle Upper Left / Lower Right Values
+	WindowRect.left=(long)0;			// Set Left Value To 0
+	WindowRect.right=(long)width;		// Set Right Value To Requested Width
+	WindowRect.top=(long)0;				// Set Top Value To 0
+	WindowRect.bottom=(long)height;		// Set Bottom Value To Requested Height
+
+	HINSTANCE hInstance			= GetModuleHandle(NULL);				// Grab An Instance For Our Window
+	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	// Redraw On Size, And Own DC For Window.
+	wc.lpfnWndProc		= (WNDPROC) _WindowProc;					// WndProc Handles Messages
+	wc.cbClsExtra		= 0;									// No Extra Window Data
+	wc.cbWndExtra		= 0;									// No Extra Window Data
+	wc.hInstance		= hInstance;							// Set The Instance
+	wc.hIcon			= LoadIcon(NULL, IDI_WINLOGO);			// Load The Default Icon
+	wc.hCursor			= LoadCursor(NULL, IDC_ARROW);			// Load The Arrow Pointer
+	wc.hbrBackground	= NULL;									// No Background Required For GL
+	wc.lpszMenuName		= NULL;									// We Don't Want A Menu
+	wc.lpszClassName	= kWindowClassName;						// Set The Class Name
+	
+	if (!RegisterClass(&wc))									// Attempt To Register The Window Class
 	{
-		CC_BREAK_IF(m_hWnd);
+		MessageBox(NULL,L"Failed To Register The Window Class.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
+		return FALSE;											// Return FALSE
+	}
+	
+	if (fullscreen)												// Attempt Fullscreen Mode?
+	{
+		DEVMODE dmScreenSettings;								// Device Mode
+		memset(&dmScreenSettings,0,sizeof(dmScreenSettings));	// Makes Sure Memory's Cleared
+		dmScreenSettings.dmSize=sizeof(dmScreenSettings);		// Size Of The Devmode Structure
+		dmScreenSettings.dmPelsWidth	= width;				// Selected Screen Width
+		dmScreenSettings.dmPelsHeight	= height;				// Selected Screen Height
+		dmScreenSettings.dmBitsPerPel	= bits;					// Selected Bits Per Pixel
+		dmScreenSettings.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
 
-		HINSTANCE hInstance = GetModuleHandle( NULL );
-		WNDCLASS  wc;		// Windows Class Structure
-
-		// Redraw On Size, And Own DC For Window.
-		wc.style          = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;  
-		wc.lpfnWndProc    = _WindowProc;					// WndProc Handles Messages
-		wc.cbClsExtra     = 0;                              // No Extra Window Data
-		wc.cbWndExtra     = 0;								// No Extra Window Data
-		wc.hInstance      = hInstance;						// Set The Instance
-		wc.hIcon          = LoadIcon( NULL, IDI_WINLOGO );	// Load The Default Icon
-		wc.hCursor        = LoadCursor( NULL, IDC_ARROW );	// Load The Arrow Pointer
-		wc.hbrBackground  = NULL;                           // No Background Required For GL
-		wc.lpszMenuName   = NULL;                           // We Don't Want A Menu
-		wc.lpszClassName  = kWindowClassName;               // Set The Class Name
-
-		CC_BREAK_IF(! RegisterClass(&wc) && 1410 != GetLastError());		
-
-		// center window position
-		RECT rcDesktop;
-		GetWindowRect(GetDesktopWindow(), &rcDesktop);
-
-		// create window
-		m_hWnd = CreateWindowEx(
-			WS_EX_APPWINDOW | WS_EX_WINDOWEDGE,	// Extended Style For The Window
-			kWindowClassName,									// Class Name
-			pTitle,												// Window Title
-			WS_CAPTION | WS_POPUPWINDOW | WS_MINIMIZEBOX,		// Defined Window Style
-			0, 0,								                // Window Position
-			0,                                                  // Window Width
-			0,                                                  // Window Height
-			NULL,												// No Parent Window
-			NULL,												// No Menu
-			hInstance,											// Instance
-			NULL );
-
-		CC_BREAK_IF(! m_hWnd);
-
-        m_eInitOrientation = CCDirector::sharedDirector()->getDeviceOrientation();
-        m_bOrientationInitVertical = (CCDeviceOrientationPortrait == m_eInitOrientation
-            || kCCDeviceOrientationPortraitUpsideDown == m_eInitOrientation) ? true : false;
-        m_tSizeInPoints.cx = w;
-        m_tSizeInPoints.cy = h;
-        resize(w, h);
-
-		// init egl
-		m_pEGL = CCEGL::create(this);
-
-		if (! m_pEGL)
+		// Try To Set Selected Mode And Get Results.  NOTE: CDS_FULLSCREEN Gets Rid Of Start Bar.
+		if (ChangeDisplaySettings(&dmScreenSettings,CDS_FULLSCREEN)!=DISP_CHANGE_SUCCESSFUL)
 		{
-			DestroyWindow(m_hWnd);
-			m_hWnd = NULL;
-			break;
+			// If The Mode Fails, Offer Two Options.  Quit Or Use Windowed Mode.
+			if (MessageBox(NULL,L"The Requested Fullscreen Mode Is Not Supported By\nYour Video Card. Use Windowed Mode Instead?",L"NeHe GL",MB_YESNO|MB_ICONEXCLAMATION)==IDYES)
+			{
+				fullscreen=FALSE;		// Windowed Mode Selected.  Fullscreen = FALSE
+			}
+			else
+			{
+				// Pop Up A Message Box Letting User Know The Program Is Closing.
+				MessageBox(NULL,L"Program Will Now Close.",L"ERROR",MB_OK|MB_ICONSTOP);
+				return FALSE;									// Return FALSE
+			}
 		}
+	}
 
-		s_pMainWindow = this;
-		bRet = true;
-	} while (0);
+	if (fullscreen)												// Are We Still In Fullscreen Mode?
+	{
+		dwExStyle=WS_EX_APPWINDOW;								// Window Extended Style
+		dwStyle=WS_POPUP;										// Windows Style
+		ShowCursor(FALSE);										// Hide Mouse Pointer
+	}
+	else
+	{
+		dwExStyle=WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;			// Window Extended Style
+		dwStyle=WS_OVERLAPPEDWINDOW;							// Windows Style
+	}
 
-	return bRet;
+	GetWindowRect(GetDesktopWindow(), &WindowRect);
+
+	//DWORD flags;
+	//flags = WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE  ;
+
+	// create window
+	m_hWnd = CreateWindowEx(
+		WS_EX_APPWINDOW | WS_EX_WINDOWEDGE,	// Extended Style For The Window
+		kWindowClassName,									// Class Name
+		pTitle,												// Window Title
+		/*WS_CAPTION |*/ WS_POPUPWINDOW/* | WS_MINIMIZEBOX*/,		// Defined Window Style
+		0, 0,								                // Window Position
+		0,                                                  // Window Width
+		0,                                                  // Window Height
+		NULL,												// No Parent Window
+		NULL,												// No Menu
+		hInstance,											// Instance
+		NULL );
+
+	//CC_BREAK_IF(! m_hWnd);
+
+    m_eInitOrientation = CCDirector::sharedDirector()->getDeviceOrientation();
+    m_bOrientationInitVertical = (CCDeviceOrientationPortrait == m_eInitOrientation
+        || kCCDeviceOrientationPortraitUpsideDown == m_eInitOrientation) ? true : false;
+    m_tSizeInPoints.cx = width;
+    m_tSizeInPoints.cy = height;
+    resize(width, height);
+
+	// init egl
+	m_pEGL = CCEGL::create(this);
+
+	if (! m_pEGL)
+	{
+		DestroyWindow(m_hWnd);
+		m_hWnd = NULL;
+	}
+
+	s_pMainWindow = this;
+
+	return true;
 }
 
 LRESULT CCEGLView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)

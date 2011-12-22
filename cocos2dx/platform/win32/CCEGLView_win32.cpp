@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+#if 0
 
 #include "CCEGLView.h"
 
@@ -598,3 +599,5 @@ CCEGLView& CCEGLView::sharedOpenGLView()
 }
 
 NS_CC_END;
+
+#endif

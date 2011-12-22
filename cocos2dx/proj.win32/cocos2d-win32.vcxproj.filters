@@ -70,6 +70,9 @@
     <Filter Include="script_support">
       <UniqueIdentifier>{e20bbd88-a111-40c3-9d5d-387a4c9cd4d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform\win32\Glut">
+      <UniqueIdentifier>{89a0939d-c5d1-4883-9ad4-563573dea9b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\base_nodes\CCAtlasNode.cpp">
@@ -335,6 +338,12 @@
     </ClCompile>
     <ClCompile Include="..\platform\win32\CCOPENGLView_win32.cpp">
       <Filter>platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\win32\CCGlutView.cpp">
+      <Filter>platform\win32\Glut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\win32\CCGlutApplication.cpp">
+      <Filter>platform\win32\Glut</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -695,6 +704,12 @@
     </ClInclude>
     <ClInclude Include="..\platform\win32\CCOPENGLView_win32.h">
       <Filter>platform\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\win32\CCGlutView.h">
+      <Filter>platform\win32\Glut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\win32\CCGlutApplication.h">
+      <Filter>platform\win32\Glut</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#ifndef __CC_EGLVIEW_WIN32_H__
-#define __CC_EGLVIEW_WIN32_H__
+#ifndef __CC_OPENGLVIEW_WIN32_H__
+#define __CC_OPENGLVIEW_WIN32_H__
 
 #include <Windows.h>
 
@@ -53,7 +53,7 @@ public:
     bool    canSetContentScaleFactor();
     void    setContentScaleFactor(float contentScaleFactor);
 
-	virtual bool Create(LPCTSTR pTitle, int w, int h);
+	virtual bool Create(LPCTSTR pTitle, int w, int h, int bits = 32, bool fullscreen = false);
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 
     int setDeviceOrientation(int eOritation);
