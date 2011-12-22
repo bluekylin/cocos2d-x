@@ -76,12 +76,20 @@ THE SOFTWARE.
 //#include <GLES/glext.h>
 #include "GL/glew.h"
 
+#undef ccglOrtho
+#undef ccglClearDepth
+#undef ccglTranslate
+
 #undef ccglGenerateMipmap
 #undef ccglGenFramebuffers
 #undef ccglBindFramebuffer
 #undef ccglFramebufferTexture2D
 #undef ccglDeleteFramebuffers
 #undef ccglCheckFramebufferStatus
+
+#define ccglOrtho					glOrtho
+#define	ccglClearDepth				glClearDepth
+#define ccglTranslate				glTranslated
 
 #define ccglGenerateMipmap			glGenerateMipmap
 #define ccglGenFramebuffers			glGenFramebuffers
@@ -90,10 +98,20 @@ THE SOFTWARE.
 #define ccglDeleteFramebuffers		glDeleteFramebuffers
 #define ccglCheckFramebufferStatus	glCheckFramebufferStatus
 
-#define glFrustumf glFrustumfOES
+#define glFrustumf glFrustum
 #define GL_POINT_SPRITE_OES         GL_POINT_SPRITE
 #define GL_COORD_REPLACE_OES        GL_COORD_REPLACE
 #define GL_POINT_SIZE_ARRAY_OES     GL_POINT_SIZE
+
+#undef CC_GL_FRAMEBUFFER
+#undef CC_GL_FRAMEBUFFER_BINDING
+#undef CC_GL_COLOR_ATTACHMENT0
+#undef CC_GL_FRAMEBUFFER_COMPLETE
+
+#define CC_GL_FRAMEBUFFER			GL_FRAMEBUFFER
+#define CC_GL_FRAMEBUFFER_BINDING	GL_FRAMEBUFFER_BINDING
+#define CC_GL_COLOR_ATTACHMENT0		GL_COLOR_ATTACHMENT0
+#define CC_GL_FRAMEBUFFER_COMPLETE	GL_FRAMEBUFFER_COMPLETE
 
 #endif
 

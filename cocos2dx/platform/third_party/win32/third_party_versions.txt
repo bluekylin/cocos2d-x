@@ -5,3 +5,6 @@ libxml2			2.7.7
 OGLES			2.08.28.0634
 zlib			1.2.5
 pthread			2.8.0
+glut                    2.6.0
+glew                    1.7.0
+glfw			2.7.2

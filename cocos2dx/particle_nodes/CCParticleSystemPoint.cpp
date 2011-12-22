@@ -126,8 +126,10 @@ void CCParticleSystemPoint::draw()
 
 	glColorPointer(4, GL_UNSIGNED_BYTE, kPointSize,(GLvoid*)offsetof(ccPointSprite,color) );
 
-	glEnableClientState(GL_POINT_SIZE_ARRAY_OES);
-	glPointSizePointerOES(GL_FLOAT,kPointSize,(GLvoid*) offsetof(ccPointSprite,size) );
+	// removed for OpenGL? bluekylin
+	//glEnableClientState(GL_POINT_SIZE_ARRAY_OES);
+	//glPointSizePointerOES(GL_FLOAT,kPointSize,(GLvoid*) offsetof(ccPointSprite,size) );
+
 #else // Uses Vertex Array List
     int offset = (int)m_pVertices;
     glVertexPointer(2,GL_FLOAT, kPointSize, (GLvoid*) offset);
