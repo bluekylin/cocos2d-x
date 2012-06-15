@@ -72,9 +72,12 @@ THE SOFTWARE.
 #endif
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-//#include <GLES/gl.h>
-//#include <GLES/glext.h>
-#include "GL/glew.h"
+	#if !CC_USING_OPENGL
+		#include <GLES/gl.h>
+		#include <GLES/glext.h>
+	#else
+		#include "GL/glew.h"
+	#endif
 
 #undef ccglOrtho
 #undef ccglClearDepth

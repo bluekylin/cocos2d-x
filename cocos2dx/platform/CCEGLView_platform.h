@@ -30,7 +30,11 @@ THE SOFTWARE.
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WOPHONE)
     #include "wophone/CCEGLView_wophone.h"
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-    #include "win32/CCEGLView_win32.h"
+	#if !CC_USING_OPENGL
+		#include "win32/CCEGLView_win32.h"
+	#else
+		#include "CCOPENGLView_win32.h"
+	#endif
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     #include "android/CCEGLView_android.h"
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)

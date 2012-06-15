@@ -22,12 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "CCEGLView.h"
-
-//#include "EGL/egl.h"
-//#include "gles/gl.h"
-//#include "GL/GL.h"
 #include "GL/glew.h"
+#include "CCEGLView.h"
 
 #include "CCSet.h"
 #include "ccMacros.h"
@@ -41,24 +37,14 @@ THE SOFTWARE.
 NS_CC_BEGIN;
 
 //////////////////////////////////////////////////////////////////////////
-// impliment CCEGL
+// impliment CCOPENGL
 //////////////////////////////////////////////////////////////////////////
 
-class CCEGL
+class CCOPENGL
 {
 public:
-	~CCEGL() 
+	~CCOPENGL() 
 	{
-		//if (EGL_NO_SURFACE != m_eglSurface)
-		//{
-		//	eglDestroySurface(m_eglDisplay, m_eglSurface);
-		//}
-		//if (EGL_NO_CONTEXT != m_eglContext)
-		//{
-		//	eglDestroyContext(m_eglDisplay, m_eglContext);
-		//}
-		//eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-		//eglTerminate(m_eglDisplay);
 		if (m_HDC)
 		{
 			ReleaseDC(m_HWND, m_HDC);
@@ -71,52 +57,17 @@ public:
 		}
 	}
 
-	static CCEGL * create(CCEGLView * pWindow)
+	static CCOPENGL * create(CCEGLView * pWindow)
 	{
-		CCEGL * pEGL = new CCEGL;
+		CCOPENGL * pOpenGL = new CCOPENGL;
 		BOOL bSuccess = FALSE;
 		do 
 		{
-			CC_BREAK_IF(! pEGL);
+			CC_BREAK_IF(! pOpenGL);
 
-			pEGL->m_HWND = pWindow->getHWnd();
+			pOpenGL->m_HWND = pWindow->getHWnd();
 
-			pEGL->m_HDC = GetDC(pEGL->m_HWND);
-
-			//EGLDisplay eglDisplay;
-			//CC_BREAK_IF(EGL_NO_DISPLAY == (eglDisplay = eglGetDisplay(pEGL->m_HDC)));
-
-			//EGLint nMajor, nMinor;
-			//CC_BREAK_IF(EGL_FALSE == eglInitialize(eglDisplay, &nMajor, &nMinor) || 1 != nMajor);
-
-			//const EGLint aConfigAttribs[] =
-			//{
-			//	EGL_LEVEL,				0,
-			//	EGL_SURFACE_TYPE,		EGL_WINDOW_BIT,
-			//	EGL_RENDERABLE_TYPE,	EGL_OPENGL_ES2_BIT,
-			//	EGL_NATIVE_RENDERABLE,	EGL_FALSE,
-			//	EGL_DEPTH_SIZE,			16,
-			//	EGL_NONE,
-			//};
-			//EGLint iConfigs;
-			//EGLConfig eglConfig;
-			//CC_BREAK_IF(EGL_FALSE == eglChooseConfig(eglDisplay, aConfigAttribs, &eglConfig, 1, &iConfigs) 
-			//	|| (iConfigs != 1));
-
-			//EGLContext eglContext;
-			//eglContext = eglCreateContext(eglDisplay, eglConfig, NULL, NULL);
-			//CC_BREAK_IF(EGL_NO_CONTEXT == eglContext);
-
-			//EGLSurface eglSurface;
-			//eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, pEGL->m_HWND, NULL);
-			//CC_BREAK_IF(EGL_NO_SURFACE == eglSurface);
-
-			//CC_BREAK_IF(EGL_FALSE == eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext));
-
-			//pEGL->m_eglDisplay = eglDisplay;
-			//pEGL->m_eglConfig  = eglConfig;
-			//pEGL->m_eglContext = eglContext;
-			//pEGL->m_eglSurface = eglSurface;
+			pOpenGL->m_HDC = GetDC(pOpenGL->m_HWND);
 
 			static	PIXELFORMATDESCRIPTOR pfd=				// pfd Tells Windows How We Want Things To Be
 			{
@@ -139,35 +90,35 @@ public:
 				0,											// Reserved
 				0, 0, 0										// Layer Masks Ignored
 			};
-			pfd.cColorBits = (BYTE) GetDeviceCaps( pEGL->m_HDC, BITSPIXEL );
+			pfd.cColorBits = (BYTE) GetDeviceCaps( pOpenGL->m_HDC, BITSPIXEL );
 
 			GLuint		PixelFormat;			// Holds The Results After Searching For A Match
-			if (!(PixelFormat=ChoosePixelFormat(pEGL->m_HDC,&pfd)))	// Did Windows Find A Matching Pixel Format?
+			if (!(PixelFormat=ChoosePixelFormat(pOpenGL->m_HDC,&pfd)))	// Did Windows Find A Matching Pixel Format?
 			{							// Reset The Display
 				MessageBox(NULL,L"Can't Find A Suitable PixelFormat.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
 				return FALSE;								// Return FALSE
 			}
 
-			if(!SetPixelFormat(pEGL->m_HDC,PixelFormat,&pfd))		// Are We Able To Set The Pixel Format?
+			if(!SetPixelFormat(pOpenGL->m_HDC,PixelFormat,&pfd))		// Are We Able To Set The Pixel Format?
 			{								// Reset The Display
 				MessageBox(NULL,L"Can't Set The PixelFormat.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
 				return FALSE;								// Return FALSE
 			}
 
 			HGLRC hRC;
-			if (!(hRC=wglCreateContext(pEGL->m_HDC)))				// Are We Able To Get A Rendering Context?
+			if (!(hRC=wglCreateContext(pOpenGL->m_HDC)))				// Are We Able To Get A Rendering Context?
 			{
 				MessageBox(NULL,L"Can't Create A GL Rendering Context.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
 				return FALSE;								// Return FALSE
 			}
 
-			if(!wglMakeCurrent(pEGL->m_HDC,hRC))					// Try To Activate The Rendering Context
+			if(!wglMakeCurrent(pOpenGL->m_HDC,hRC))					// Try To Activate The Rendering Context
 			{
 				MessageBox(NULL,L"Can't Activate The GL Rendering Context.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
 				return FALSE;								// Return FALSE
 			}
 
-			//wglMakeCurrent(pEGL->m_HDC,wglCreateContext(pEGL->m_HDC));
+			//wglMakeCurrent(pOpenGL->m_HDC,wglCreateContext(pOpenGL->m_HDC));
 
 			GLenum err = glewInit();
 			if ( GLEW_OK != err )
@@ -186,55 +137,29 @@ public:
 
 		if (! bSuccess)
 		{
-			CC_SAFE_DELETE(pEGL);  
+			CC_SAFE_DELETE(pOpenGL);  
 		}
 
-		return pEGL;
+		return pOpenGL;
 	}
 
 	void resizeSurface()
 	{
-//  		if (! m_eglNativeWindow || EGL_NO_DISPLAY == m_eglDisplay)
-//  		{
-//  			return;
-//  		}
-//  
-//  		// release old surface
-//  		if (EGL_NO_SURFACE != m_eglSurface)
-//  		{
-//  			eglDestroySurface(m_eglDisplay, m_eglSurface);
-//  			m_eglSurface = EGL_NO_SURFACE;
-//  		}
-//  
-//  		// create new surface and make current
-//  		m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_eglNativeWindow, NULL);
-//  		eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext);
+		// to do...
 	}
 
 	void swapBuffers()
 	{
 		SwapBuffers(m_HDC);
-		//if (EGL_NO_DISPLAY != m_eglDisplay)
-		//{
-		//	eglSwapBuffers(m_eglDisplay, m_eglSurface);
-		//}
 	}
 private:
-	CCEGL() 
+	CCOPENGL() 
 		: m_HWND(NULL)
 		, m_HDC(0)
-		//, m_eglDisplay(EGL_NO_DISPLAY)
-		//, m_eglConfig(0)
-		//, m_eglSurface(EGL_NO_SURFACE)
-		//, m_eglContext(EGL_NO_CONTEXT)
 	{}
 
 	HWND		m_HWND;
 	HDC			m_HDC;
-	//EGLDisplay              m_eglDisplay;
-	//EGLConfig               m_eglConfig;
-	//EGLSurface              m_eglSurface;
-	//EGLContext              m_eglContext;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -260,7 +185,7 @@ CCEGLView::CCEGLView()
 , m_bOrientationReverted(false)
 , m_bOrientationInitVertical(false)
 , m_pDelegate(NULL)
-, m_pEGL(NULL)
+, m_pOpenGL(NULL)
 , m_hWnd(NULL)
 , m_eInitOrientation(CCDeviceOrientationPortrait)
 , m_fScreenScaleFactor(1.0f)
@@ -283,7 +208,7 @@ CCEGLView::~CCEGLView()
  *	fullscreenflag	- Use Fullscreen Mode (TRUE) Or Windowed Mode (FALSE)	*/
 bool CCEGLView::Create(LPCTSTR pTitle, int width, int height, int bits, bool fullscreen)
 {
-	GLuint		PixelFormat;			// Holds The Results After Searching For A Match
+	//GLuint		PixelFormat;			// Holds The Results After Searching For A Match
 	WNDCLASS	wc;						// Windows Class Structure
 	DWORD		dwExStyle;				// Window Extended Style
 	DWORD		dwStyle;				// Window Style
@@ -379,9 +304,9 @@ bool CCEGLView::Create(LPCTSTR pTitle, int width, int height, int bits, bool ful
     resize(width, height);
 
 	// init egl
-	m_pEGL = CCEGL::create(this);
+	m_pOpenGL = CCOPENGL::create(this);
 
-	if (! m_pEGL)
+	if (! m_pOpenGL)
 	{
 		DestroyWindow(m_hWnd);
 		m_hWnd = NULL;
@@ -519,7 +444,7 @@ CCSize CCEGLView::getSize()
 
 bool CCEGLView::isOpenGLReady()
 {
-    return (NULL != m_pEGL);
+    return (NULL != m_pOpenGL);
 }
 
 void CCEGLView::release()
@@ -535,7 +460,7 @@ void CCEGLView::release()
     CC_SAFE_DELETE(m_pSet);
     CC_SAFE_DELETE(m_pTouch);
     CC_SAFE_DELETE(m_pDelegate);
-    CC_SAFE_DELETE(m_pEGL);
+    CC_SAFE_DELETE(m_pOpenGL);
     delete this;
 }
 
@@ -546,9 +471,9 @@ void CCEGLView::setTouchDelegate(EGLTouchDelegate * pDelegate)
 
 void CCEGLView::swapBuffers()
 {
-    if (m_pEGL)
+    if (m_pOpenGL)
     {
-        m_pEGL->swapBuffers();
+        m_pOpenGL->swapBuffers();
     }
 }
 
@@ -576,7 +501,7 @@ int CCEGLView::setDeviceOrientation(int eOritation)
 
 void CCEGLView::setViewPortInPoints(float x, float y, float w, float h)
 {
-    if (m_pEGL)
+    if (m_pOpenGL)
     {
         float factor = m_fScreenScaleFactor / CC_CONTENT_SCALE_FACTOR();
         glViewport((GLint)(x * factor) + m_rcViewPort.left,
@@ -588,7 +513,7 @@ void CCEGLView::setViewPortInPoints(float x, float y, float w, float h)
 
 void CCEGLView::setScissorInPoints(float x, float y, float w, float h)
 {
-    if (m_pEGL)
+    if (m_pOpenGL)
     {
         float factor = m_fScreenScaleFactor / CC_CONTENT_SCALE_FACTOR();
         glScissor((GLint)(x * factor) + m_rcViewPort.left,
@@ -630,9 +555,9 @@ void CCEGLView::resize(int width, int height)
     SetWindowPos(m_hWnd, 0, 0, 0, rcClient.right - rcClient.left, 
         rcClient.bottom - rcClient.top, SWP_NOCOPYBITS | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-    if (m_pEGL)
+    if (m_pOpenGL)
     {
-        m_pEGL->resizeSurface();
+        m_pOpenGL->resizeSurface();
     }
 
     // calculate view port in pixels

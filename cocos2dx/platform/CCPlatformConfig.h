@@ -49,6 +49,9 @@ build for which target platform
 // Determine tartet platform by compile environment macro.
 #define CC_TARGET_PLATFORM             CC_PLATFORM_UNKNOWN
 
+// determine using 
+#define CC_USING_OPENGL	1
+
 // iphone
 #if ! CC_TARGET_PLATFORM && (defined(TARGET_OS_IPHONE) || defined(TARGET_IPHONE_SIMULATOR))
     #undef  CC_TARGET_PLATFORM

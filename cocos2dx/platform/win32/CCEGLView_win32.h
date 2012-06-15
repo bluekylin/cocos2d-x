@@ -25,9 +25,6 @@ THE SOFTWARE.
 #ifndef __CC_EGLVIEW_WIN32_H__
 #define __CC_EGLVIEW_WIN32_H__
 
-#include "CCOPENGLView_win32.h"
-
-#if 0
 
 
 #include <Windows.h>
@@ -104,5 +101,3 @@ private:
 NS_CC_END;
 
 #endif	// end of __CC_EGLVIEW_WIN32_H__
-
-#endif

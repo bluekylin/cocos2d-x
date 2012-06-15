@@ -25,6 +25,8 @@ THE SOFTWARE.
 #ifndef __CC_OPENGLVIEW_WIN32_H__
 #define __CC_OPENGLVIEW_WIN32_H__
 
+#if 0
+
 #include <Windows.h>
 
 #include "CCCommon.h"
@@ -36,14 +38,12 @@ class CCSet;
 class CCTouch;
 class EGLTouchDelegate;
 
-class CCOPENGL;
-
-class CC_DLL CCEGLView
+class CC_DLL CCGlutView
 {
 public:
 
-    CCEGLView();
-    virtual ~CCEGLView();
+    CCGlutView();
+    virtual ~CCGlutView();
 
     CCSize  getSize();
     bool    isOpenGLReady();
@@ -73,7 +73,12 @@ public:
     /**
     @brief	get the shared main open gl window
     */
-    static CCEGLView& sharedOpenGLView();
+    static CCGlutView& sharedOpenGLView();
+
+	void onLButtonDown(int x, int y);
+	void onMouseMove(int x, int y);
+	void onLButtonUp(int x, int y);
+	void onKeyDown(unsigned char key);
 
 protected:
 
@@ -86,10 +91,6 @@ private:
     CCTouch *           m_pTouch;
     EGLTouchDelegate *  m_pDelegate;
 
-    CCOPENGL *            m_pOpenGL;
-
-	HWND				m_hWnd;
-
 	int					m_eInitOrientation;
     SIZE                m_tSizeInPoints;
     float               m_fScreenScaleFactor;
@@ -98,4 +99,6 @@ private:
 
 NS_CC_END;
 
-#endif	// end of __CC_OPENGLVIEW_WIN32_H__
+#endif	// end of __CC_EGLVIEW_WIN32_H__
+
+#endif

@@ -25,8 +25,14 @@ THE SOFTWARE.
 #ifndef __CC_EGLVIEW_H__
 #define __CC_EGLVIEW_H__
 
+#include "CCPlatformConfig.h"
+
 #ifdef _WIN32
-#include "../platform/win32/CCOPENGLView_win32.h"
+	#if !CC_USING_OPENGL
+	#include "../platform/win32/CCEGLView_win32.h"
+	#else
+	#include "../platform/win32/CCOPENGLView_win32.h"
+	#endif
 #else
 #include "../platform/CCEGLView_platform.h"
 #endif
